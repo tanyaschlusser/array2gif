@@ -2,19 +2,10 @@ Array2GIF: convert NumPy arrays to (animated) GIF
 =================================================
 
 
-..raw:: html
-
-    <div>
-      <img src="https://tanyaschlusser.github.io/ising/img/ising_animation_1.6.gif"
-        alt="Animation of random pixels converging from two colors to one color. T = 0.7 T_c."
-        style="width:25%"></img>
-      <img src="https://tanyaschlusser.github.io/ising/img/ising_animation_2.0.gif"
-        alt="Animation of random pixels converging less slowly to one color. T = 0.88 T_c."
-        style="width:25%"></img>
-      <img src="https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif"
-        alt="Animation of random pixels staying mostly random. T = 1.06 T_c."
-        style="width:25%"></img>
-    </div>
+ +-------------+--------------+--------------+
+ | |ising|     + |ising2|     + |ising3|     +
+ | T = 0.7 T_c + T = 0.88 T_c + T = 1.06 T_c +
+ +-------------+--------------+--------------+
 
 
 These are animated GIFs showing a Monte Carlo simulation to obtain a distribution
@@ -65,3 +56,15 @@ It's not on PyPI yet, so: ::
 
 
 .. _`the repository`: http://github.com/tanyaschlusser/array2gif
+.. |ising1| image:: https://tanyaschlusser.github.io/ising/img/ising_animation_1.6.gif
+   :width: 30%
+   :align: middle
+   :alt: Animation of random pixels converging from two colors to one color. T = 0.7 T_c.
+.. |ising2| image:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.0.gif
+   :width: 30%
+   :align: middle
+   :alt: Animation of random pixels converging less slowly to one color. T = 0.88 T_c.
+.. |ising2| image:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif
+   :width: 30%
+   :align: middle
+   :alt: Animation of random pixels staying mostly random. T = 1.06 T_c.
