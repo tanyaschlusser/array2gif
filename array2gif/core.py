@@ -26,10 +26,6 @@ TRAILER = b'\x3b'
 ZERO = b'\x00'
 
 
-def little_end(number, length=2):
-    return struct.pack('<I', number)[:length]
-
-
 def check_dataset_range(dataset):
     """Confirm no rgb value is outside the range [0, 255]."""
     if dataset.max() > 255 or dataset.min() < 0:
@@ -49,19 +45,19 @@ def check_dataset_shape(dataset):
 
 def check_dataset(dataset):
     """Confirm shape (3 colors x rows x cols) and values [0 to 255] are OK."""
-    if isinstance(dataset, numpy.array):
+    if isinstance(dataset, numpy.ndarray):
         check_dataset_shape(dataset)
         check_dataset_range(dataset)
     else:  # must be a list of arrays
         for i, d in enumerate(dataset):
-            if not isinstance(d, numpy.array):
+            if not isinstance(d, numpy.ndarray):
                 raise ValueError(
                     'Requires a NumPy array (rgb x rows x cols) '
                     'with integer values in the range [0, 255].'
                 )
             try:
-                check_dataset_shape(dataset)
-                check_dataset_range(dataset)
+                check_dataset_shape(d)
+                check_dataset_range(d)
             except ValueError as err:
                 raise ValueError(
                     '{}\nAt position {} in the list of arrays.'
@@ -73,9 +69,11 @@ def get_image(dataset):
     """Convert the NumPy array to two nested lists with r,g,b tuples."""
     dim, nrow, ncol = dataset.shape
     image = [[
-            b''.join(
-                little_end(dataset[k, i, j], length=1)
-                for k in range(dim)
+            struct.pack(
+                '<BBB',
+                dataset[0, i, j],
+                dataset[1, i, j],
+                dataset[2, i, j]
             )
             for j in range(ncol)]
         for i in range(nrow)]
@@ -96,10 +94,8 @@ def get_color_table_size(num_colors):
 
 
 def _get_logical_screen_descriptor(image, colors):
-    w = len(image)
-    h = len(image[0])
-    width = little_end(w)
-    height = little_end(h)
+    width = len(image)
+    height = len(image[0])
     global_color_table_flag = '1'
     # color resolution possibly doesn't do anything, because
     # the size of the colors in the global color table is always
@@ -109,25 +105,23 @@ def _get_logical_screen_descriptor(image, colors):
     color_resolution = '001'
     colors_sorted_flag = '0'  # even though I try to sort
     size_of_global_color_table = get_color_table_size(len(colors))
-    packed_bits = little_end(
-        int(
-            global_color_table_flag +
-            color_resolution +
-            colors_sorted_flag +
-            size_of_global_color_table,
-            base=2
-        ),
-        length=1
+    packed_bits = int(
+        global_color_table_flag +
+        color_resolution +
+        colors_sorted_flag +
+        size_of_global_color_table,
+        base=2
     )
-    background_color_index = ZERO
-    pixel_aspect_ratio = b'\x00'
-    logical_screen_descriptor = b''.join((
+    background_color_index = 0
+    pixel_aspect_ratio = 0
+    logical_screen_descriptor = struct.pack(
+        '<HHBBB',
         width,
         height,
         packed_bits,
         background_color_index,
         pixel_aspect_ratio
-    ))
+    )
     return logical_screen_descriptor
 
 
@@ -144,30 +138,29 @@ def _get_global_color_table(colors):
     """
     global_color_table = b''.join(c[0] for c in colors.most_common())
     full_table_size = 2**(1+int(get_color_table_size(len(colors)), 2))
-    zeros = b''.join(ZERO * 3 for i in range(full_table_size - len(colors)))
+    repeats = 3 * (full_table_size - len(colors))
+    zeros = struct.pack('<{}x'.format(repeats))
     return global_color_table + zeros
 
 
 # ------------------------------- Graphics Control Extension --- #
 def _get_graphics_control_extension(delay_time=0):
     control_label = b'\xf9'
-    block_size = little_end(4, length=1)
+    block_size = 4
     disposal_method = '001'
     user_input_expected = '0'
     transparent_index_given = '0'
-    packed_bits = little_end(
-        int(
-            '000' +
-            disposal_method +
-            user_input_expected +
-            transparent_index_given,
-            base=2
-        ),
-        length=1
+    packed_bits = int(
+        '000' +
+        disposal_method +
+        user_input_expected +
+        transparent_index_given,
+        base=2
     )
-    delay_time = little_end(delay_time)
-    transparency_index = ZERO
-    graphics_control_extension = b''.join((
+    delay_time = delay_time
+    transparency_index = 0
+    graphics_control_extension = struct.pack(
+        '<ccBBHBc',
         EXTENSION,
         control_label,
         block_size,
@@ -175,18 +168,19 @@ def _get_graphics_control_extension(delay_time=0):
         delay_time,
         transparency_index,
         BLOCK_TERMINATOR
-    ))
+    )
     return graphics_control_extension
 
 
 # ----------------------------------- Application Extension --- #
 def _get_application_extension(loop_times=0):
     ANIMATION_LABEL = b'\xff'
-    block_size = little_end(11, length=1)
+    block_size = 11
     application_identifier = b'NETSCAPE2.0'
-    data_length = little_end(3, length=1)
-    loop_value = little_end(loop_times, length=2)
-    application_extension = b''.join((
+    data_length = 3
+    loop_value = loop_times
+    application_extension = struct.pack(
+        '<ccB11sBcHc',
         EXTENSION,
         ANIMATION_LABEL,
         block_size,
@@ -195,7 +189,7 @@ def _get_application_extension(loop_times=0):
         b'\x01',
         loop_value,
         BLOCK_TERMINATOR
-    ))
+    )
     return application_extension
 
 
@@ -203,44 +197,37 @@ def _get_application_extension(loop_times=0):
 # --------------------------------------- Image Descriptor --- #
 def _get_image_descriptor(image, left=0, top=0):
     image_separator = b'\x2c'
-    image_left_position = little_end(left)
-    image_top_position = little_end(top)
-    image_width = little_end(len(image[0]))
-    image_height = little_end(len(image))
+    image_left_position = left
+    image_top_position = top
+    image_width = len(image[0])
+    image_height = len(image)
     local_color_table_exists = '0'
     interlaced_flag = '0'
     sort_flag = '0'
     reserved = '000'
     local_color_table_size = '000'
-    packed_bits = little_end(
-        int(
-            local_color_table_exists +
-            interlaced_flag +
-            sort_flag +
-            reserved +
-            local_color_table_size,
-            base=2
-        ),
-        length=1
+    packed_bits = int(
+        local_color_table_exists +
+        interlaced_flag +
+        sort_flag +
+        reserved +
+        local_color_table_size,
+        base=2
     )
-    image_descriptor = b''.join((
+    image_descriptor = struct.pack(
+        '<cHHHHB',
         image_separator,
         image_left_position,
         image_top_position,
         image_width,
         image_height,
         packed_bits
-    ))
+    )
     return image_descriptor
 
 
 # --------------------------------------------- Image Data --- #
-def _get_image_data(image, colors):
-    """Performs the LZW compression as described by Matthew Flickinger.
-
-    This isn't fast, but it works.
-    http://www.matthewflickinger.com/lab/whatsinagif/lzw_image_data.asp
-    """
+def _lzw_encode(image, colors):
     MAX_COMPRESSION_CODE = 4095
     base_lookup = dict((c[0], i) for i, c in enumerate(colors.most_common()))
     lookup = base_lookup.copy()
@@ -249,7 +236,7 @@ def _get_image_data(image, colors):
     end_code = clear_code + 1
     next_compression_code = end_code
     # Get the minimum number of bits needed for the next code.
-    nbits = len('{:b}'.format(next_compression_code))
+    nbits = next_compression_code.bit_length()
     pixel_stream = [pixel for row in image for pixel in row]
     pixel_buffer = [pixel_stream.pop(0)]
     coded_bits = [(clear_code, nbits)]
@@ -262,19 +249,30 @@ def _get_image_data(image, colors):
             coded_bits.insert(0, (clear_code, nbits))
             pixel_buffer = [pixel]
             next_compression_code = end_code
-            nbits = len('{:b}'.format(next_compression_code))
+            nbits = next_compression_code.bit_length()
+            lookup = base_lookup.copy()
         else:
             code = lookup[b''.join(pixel_buffer)]
             coded_bits.insert(0, (code, nbits))
             pixel_buffer = [pixel]
             next_compression_code += 1
-            nbits = len('{:b}'.format(next_compression_code))
+            nbits = next_compression_code.bit_length()
             lookup[test_string] = next_compression_code
     # Add the last content from the pixel buffer.
     coded_bits.insert(0, (lookup[b''.join(pixel_buffer)], nbits))
     coded_bits.insert(0, (end_code, nbits))
+    return lzw_code_size, coded_bits
+
+
+def _get_image_data(image, colors):
+    """Performs the LZW compression as described by Matthew Flickinger.
+
+    This isn't fast, but it works.
+    http://www.matthewflickinger.com/lab/whatsinagif/lzw_image_data.asp
+    """
+    lzw_code_size, coded_bits = _lzw_encode(image, colors)
     coded_bytes = ''.join(
-        '{{:0{}b}}'.format(vbits).format(val) for val, vbits in coded_bits)
+        '{{:0{}b}}'.format(nbits).format(val) for val, nbits in coded_bits)
     coded_bytes = '0' * ((8 - len(coded_bytes)) % 8) + coded_bytes
     coded_data = list(
         reversed([
@@ -282,21 +280,19 @@ def _get_image_data(image, colors):
             for i in range(len(coded_bytes) // 8)
         ])
     )
-    output = little_end(lzw_code_size, length=1)
+    output = [struct.pack('<B', lzw_code_size)]
     # Must output the data in blocks of length 255
     block_length = min(255, len(coded_data))
     while block_length > 0:
-        block = b''.join(
-            little_end(code, length=1) for code in coded_data[:block_length]
+        block = struct.pack(
+            '<{}B'.format(block_length + 1),
+            block_length,
+            *coded_data[:block_length]
         )
-        output = (
-            output +
-            little_end(block_length, length=1) +
-            block
-        )
+        output.append(block)
         coded_data = coded_data[block_length:]
         block_length = min(255, len(coded_data))
-    return output
+    return b''.join(output)
 
 
 def _get_sub_image(image, colors, delay_time=0):
