@@ -48,6 +48,9 @@ library will loop indefinitely.
         ])
     ]
     write_gif(dataset, 'rgbbgr.gif', fps=5)
+    
+    # or for just a still GIF
+    write_gif(dataset[0], 'rgb.gif')
 
 
 
