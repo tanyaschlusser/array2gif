@@ -1,30 +1,30 @@
-Array2GIF: utility to convert NumPy arrays to (animated) GIF 89a format
-=======================================================================
+Array2GIF: convert NumPy arrays to (animated) GIF
+=================================================
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_1.6.gif
     :alt: Animation of random pixels converging from two colors to one color.
     :width: 30%
 
-    An animated GIF showing a Monte Carlo simulation to obtain an equilibrium
-    magetization, using the Ising model, at T / T_{critical} = 70%.
+    T = 0.7 T_c
 
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.0.gif
     :alt: Animation of random pixels converging less slowly to one color.
     :width: 30%
 
-    An animated GIF showing a Monte Carlo simulation to obtain an equilibrium
-    magetization, using the Ising model, at T / T_{critical} = 88%.
-
+    T = 0.88 T_c
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif
     :alt: Animation of random pixels staying mostly random.
     :width: 30%
 
-    An animated GIF showing a Monte Carlo simulation to obtain an equilibrium
-    magetization, using the Ising model, at T / T_{critical} = 106% ...
-    staying random because now the influence of temperature exceeds the
-    coupling force between atoms.
+    T = 1.06 T_c
+
+
+These are animated GIFs showing a Monte Carlo simulation to obtain a distribution
+of equilibrium magnetization, using the Ising model, at various dimensionless temperatures
+relative to the Curie temperature. It explores the interplay between the magnetic
+coupling force between atoms, and the randomness from the temperature.
 
 
 Array2GIF provides a single top-level function, `write_gif()`, to
