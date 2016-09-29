@@ -30,7 +30,8 @@ Here is an example for a 2 pixel by 3 pixel animated GIF with
 two frames, switching 5 frames per second. All animations from this
 library will loop indefinitely.
 
-::
+
+.. code-block:: python
 
     import numpy as np
     from array2gif import write_gif
