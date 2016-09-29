@@ -9,14 +9,14 @@ except ImportError:
 
 
 long_description = open('README.rst').read()
-packages = []
+packages = ['array2gif']
 
 
 setup(
     name=array2gif.__title__,
     version=array2gif.__version__,
     description='Write a (list of) NumPy array(s) to an (animated) GIF.',
-    long_descripton=long_description,
+    long_description=long_description,
     classifiers=(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
