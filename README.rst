@@ -3,7 +3,7 @@ Array2GIF: convert NumPy arrays to (animated) GIF
 
 
  +-------------+--------------+--------------+
- | |ising|     + |ising2|     + |ising3|     +
+ | |ising1|    + |ising2|     + |ising3|     +
  | T = 0.7 T_c + T = 0.88 T_c + T = 1.06 T_c +
  +-------------+--------------+--------------+
 
@@ -64,7 +64,7 @@ It's not on PyPI yet, so: ::
    :width: 30%
    :align: middle
    :alt: Animation of random pixels converging less slowly to one color. T = 0.88 T_c.
-.. |ising2| image:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif
+.. |ising3| image:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif
    :width: 30%
    :align: middle
    :alt: Animation of random pixels staying mostly random. T = 1.06 T_c.
