@@ -3,20 +3,23 @@ Array2GIF: convert NumPy arrays to (animated) GIF
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_1.6.gif
     :alt: Animation of random pixels converging from two colors to one color.
-    :width: 30%
+    :figwidth: 30%
+    :width: 25%
 
     T = 0.7 T_c
 
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.0.gif
     :alt: Animation of random pixels converging less slowly to one color.
-    :width: 30%
+    :figwidth: 30%
+    :width: 25%
 
     T = 0.88 T_c
 
 .. figure:: https://tanyaschlusser.github.io/ising/img/ising_animation_2.4.gif
     :alt: Animation of random pixels staying mostly random.
-    :width: 30%
+    :figwidth: 30%
+    :width: 25%
 
     T = 1.06 T_c
 
