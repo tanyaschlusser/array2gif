@@ -44,6 +44,10 @@ library will loop indefinitely.
         np.array([
             [[0, 0, 255], [0, 0, 255]],
             [[0, 255, 0], [0, 255, 0]],
+            [[255, 0, 0], [255, 0, 0]]
+        ])
+    ]
+    write_gif(dataset, 'rgbbgr.gif', fps=10)
 
 
 
