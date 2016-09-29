@@ -47,7 +47,7 @@ library will loop indefinitely.
             [[255, 0, 0], [255, 0, 0]]
         ])
     ]
-    write_gif(dataset, 'rgbbgr.gif', fps=10)
+    write_gif(dataset, 'rgbbgr.gif', fps=5)
 
 
 
