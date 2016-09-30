@@ -41,10 +41,3 @@ are:
 
 """
 from array2gif.core import check_dataset, write_gif
-
-__title__ = 'array2gif'
-__version__ = '0.1.0'
-__author__ = 'Tanya Schlusser'
-__license__ = 'BSD'
-__copyright__ = 'Copyright 2016 Tanya Schlusser'
-__docformat__ = 'restructuredtext'

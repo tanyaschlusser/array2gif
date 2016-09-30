@@ -18,6 +18,13 @@ from collections import Counter
 
 import numpy
 
+__title__ = 'array2gif'
+__version__ = '0.1.0.dev1'
+__author__ = 'Tanya Schlusser'
+__license__ = 'BSD'
+__copyright__ = 'Copyright 2016 Tanya Schlusser'
+__docformat__ = 'restructuredtext'
+
 
 BLOCK_TERMINATOR = b'\x00'
 EXTENSION = b'\x21'
@@ -70,7 +77,7 @@ def get_image(dataset):
     dim, nrow, ncol = dataset.shape
     image = [[
             struct.pack(
-                '<BBB',
+                'BBB',
                 dataset[0, i, j],
                 dataset[1, i, j],
                 dataset[2, i, j]
@@ -193,7 +200,7 @@ def _get_application_extension(loop_times=0):
     return application_extension
 
 
-# -============================================ Image Block =====- #
+# ============================================= Image Block ====== #
 # --------------------------------------- Image Descriptor --- #
 def _get_image_descriptor(image, left=0, top=0):
     image_separator = b'\x2c'
