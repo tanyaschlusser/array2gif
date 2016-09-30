@@ -10,15 +10,15 @@ Array2GIF: convert NumPy arrays to (animated) GIF
 
 Array2GIF provides a single top-level function, `write_gif()`, to
 write a 3-D NumPy array to a GIF, or a list of these arrays to an
-animated GIF.
+animated GIF.  It works for me - just small animations of thermodynamics
+simulations - like the magnetization in the Ising model shown here.
 
-It works for me -- just small animations of thermodynamics
-simulations, like the magnetization in the Ising model shown here.
-
-These are animated GIFs that explore the interplay between the magnetic
+These animated GIFs use white to represent negative spin and blue
+to represent positive spin. They explore the interplay between the magnetic
 coupling force between atoms, and the randomness from the temperature,
 using the Ising model and Monte Carlo simulation to sample from
-equilibrium distributions.
+equilibrium distributions. The animation shows the progression from
+the seed magnetization to equilibrium.
 
 
 Usage
