@@ -58,9 +58,14 @@ library will loop indefinitely.
 Installation
 ------------
 
-It's not on PyPI yet, so: ::
+Either: ::
+
+    pip install array2gif
+
+or: ::
 
     pip install git+https://github.com/tanyaschlusser/array2gif.git#egg=array2gif
+
 
 
 .. _`the repository`: http://github.com/tanyaschlusser/array2gif
