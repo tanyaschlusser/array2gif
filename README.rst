@@ -8,19 +8,17 @@ Array2GIF: convert NumPy arrays to (animated) GIF
  +-------------+--------------+--------------+
 
 
-These are animated GIFs showing a Monte Carlo simulation to obtain a distribution
-of equilibrium magnetization, using the Ising model, at various dimensionless temperatures
-relative to the Curie temperature. It explores the interplay between the magnetic
-coupling force between atoms, and the randomness from the temperature.
-
-
 Array2GIF provides a single top-level function, `write_gif()`, to
 write a 3-D NumPy array to a GIF, or a list of these arrays to an
 animated GIF.
 
-It is currently in alpha stage, with no attempt at optimization for
-speed, but it works great for me -- just small animations of thermodynamics
+It works for me -- just small animations of thermodynamics
 simulations, like the magnetization in the Ising model shown here.
+
+These are animated GIFs that explore the interplay between the magnetic
+coupling force between atoms, and the randomness from the temperature,
+using the Ising model and Monte Carlo simulation to sample from
+equilibrium distributions.
 
 
 Usage
