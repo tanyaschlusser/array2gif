@@ -19,10 +19,10 @@ from collections import Counter
 import numpy
 
 __title__ = 'array2gif'
-__version__ = '0.1.0b1'
+__version__ = '1.0.0'
 __author__ = 'Tanya Schlusser'
 __license__ = 'BSD'
-__copyright__ = 'Copyright 2016 Tanya Schlusser'
+__copyright__ = 'Copyright 2016-2018 Tanya Schlusser'
 __docformat__ = 'restructuredtext'
 
 
@@ -76,10 +76,10 @@ def try_fix_dataset(dataset):
     if isinstance(dataset, numpy.ndarray):
         if len(dataset.shape) == 3:  # NumPy 3D
             if dataset.shape[-1] == 3:
-                return dataset.transpose()
+                return dataset.transpose((2, 0, 1))
         elif len(dataset.shape) == 4:  # NumPy 4D
             if dataset.shape[-1] == 3:
-                return dataset.transpose((0, 3, 2, 1))
+                return dataset.transpose((0, 3, 1, 2))
         # Otherwise couldn't fix it.
         return dataset
     # List of Numpy 3D arrays.
