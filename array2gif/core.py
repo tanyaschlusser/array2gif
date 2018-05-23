@@ -42,7 +42,7 @@ def check_dataset_range(dataset):
 def check_dataset_shape(dataset):
     """Confirm the dataset has shape 3 x nrows x ncols."""
     if len(dataset.shape) != 3:
-        raise ValueError('The dataset needs 3 dimensions: rgb, nrows, ncols')
+        raise ValueError('Each image needs 3 dimensions: rgb, nrows, ncols')
     if dataset.shape[0] != 3:
         raise ValueError(
             'The dataset\'s first dimension must have all 3\n'
@@ -52,10 +52,10 @@ def check_dataset_shape(dataset):
 
 def check_dataset(dataset):
     """Confirm shape (3 colors x rows x cols) and values [0 to 255] are OK."""
-    if isinstance(dataset, numpy.ndarray):
+    if isinstance(dataset, numpy.ndarray) and not len(dataset.shape) == 4:
         check_dataset_shape(dataset)
         check_dataset_range(dataset)
-    else:  # must be a list of arrays
+    else:  # must be a list of arrays or a 4D NumPy array
         for i, d in enumerate(dataset):
             if not isinstance(d, numpy.ndarray):
                 raise ValueError(
@@ -70,6 +70,26 @@ def check_dataset(dataset):
                     '{}\nAt position {} in the list of arrays.'
                     .format(err, i)
                 )
+
+def try_fix_dataset(dataset):
+    """Transpose the image data if it's in PIL format."""
+    if isinstance(dataset, numpy.ndarray):
+        if len(dataset.shape) == 3:  # NumPy 3D
+            if dataset.shape[-1] == 3:
+                return dataset.transpose()
+        elif len(dataset.shape) == 4:  # NumPy 4D
+            if dataset.shape[-1] == 3:
+                return dataset.transpose((0, 3, 2, 1))
+        # Otherwise couldn't fix it.
+        return dataset
+    # List of Numpy 3D arrays.
+    for i, d in enumerate(dataset):
+        if not isinstance(d, numpy.ndarray):
+            return dataset
+        if not (len(d.shape) == 3 and d.shape[-1] == 3):
+            return dataset
+        dataset[i] = d.transpose()
+    return dataset
 
 
 def get_image(dataset):
@@ -358,11 +378,16 @@ def write_gif(dataset, filename, fps=10):
 
     ..raises:: ValueError
     """
-    check_dataset(dataset)
+    try:
+        check_dataset(dataset)
+    except ValueError as e:
+        dataset = try_fix_dataset(dataset)
+        check_dataset(dataset)
     delay_time = 100 // int(fps)
 
     def encode(d):
-        if isinstance(d, list):
+        four_d = isinstance(dataset, numpy.ndarray) and len(dataset.shape) == 4
+        if four_d or not isinstance(dataset, numpy.ndarray):
             return _make_animated_gif(d, delay_time=delay_time)
         else:
             return _make_gif(d)
