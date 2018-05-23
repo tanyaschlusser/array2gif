@@ -66,6 +66,14 @@ class Array2GIFTestCase(unittest.TestCase):
             d = np.array([[[0]], [[256]], [[0]]])
             core.check_dataset_range(d)
 
+    def test_no_range_error_when_in_bounds(self):
+        d = np.array([[[1]], [[1]], [[255]]])
+        try:
+            core.check_dataset_range(d)
+        except ValueError:
+            msg = "`check_dataset_range` raised ValueError on allowed color."
+            self.fail(msg)
+
     def test_shape_error_when_not_3d(self):
         with self.assertRaises(ValueError):
             d = np.array([[0], [0], [0]])
@@ -76,6 +84,44 @@ class Array2GIFTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             d = np.array([[[0]], [[0]], [[0]], [[0]]])
             core.check_dataset_shape(d)
+
+    def test_no_shape_error_when_4d_numpy_array(self):
+        one_red_pixel = np.array([[[255]], [[0]], [[0]]])
+        one_green_pixel = np.array([[[0]], [[255]], [[0]]])
+        d = np.array([one_red_pixel, one_green_pixel])
+        try:
+            core.check_dataset(d)
+        except ValueError as e:
+            msg = "`check_dataset` ValueError on 4D numpy array.\n{}"
+            self.fail(msg.format(e))
+
+    def test_fix_shape_error_when_PIL_format(self):
+        one_green_pixel = np.array([[[0]], [[255]], [[0]]])
+        pil_green_pixel = np.array([[[0, 255, 0]]])
+        with self.assertRaises(ValueError):
+            core.check_dataset(pil_green_pixel)
+        d = core.try_fix_dataset(pil_green_pixel)
+        try:
+            core.check_dataset(d)
+        except ValueError as e:
+            msg = "`check_dataset` ValueError on fixed dataset.\n{}"
+            self.fail(msg.format(e))
+        self.assertEqual(True, (d == one_green_pixel).all())
+
+    def test_fix_shape_error_when_PIL_format_in_4d_numpy_array(self):
+        one_red_pixel = np.array([[[255]], [[0]], [[0]]])
+        one_green_pixel = np.array([[[0]], [[255]], [[0]]])
+        d = np.array([one_red_pixel, one_green_pixel])
+        pil_d = np.array([one_red_pixel.transpose(), one_green_pixel.transpose()])
+        with self.assertRaises(ValueError):
+            core.check_dataset(pil_d)
+        fixed_d = core.try_fix_dataset(pil_d)
+        try:
+            core.check_dataset(fixed_d)
+        except ValueError as e:
+            msg = "`check_dataset` ValueError on fixed 4D dataset.\n{}"
+            self.fail(msg.format(e))
+        self.assertEqual(True, (fixed_d == d).all())
 
     def test_pixels_three_bytes(self):
         d = np.array([[[1]], [[2]], [[3]]])
