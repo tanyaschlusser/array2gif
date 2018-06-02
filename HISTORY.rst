@@ -4,7 +4,14 @@ Release History
 ---------------
 
 
-1.0.0 (2018-06-02)
+1.0.3 (2018-06-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Did not bump version in documentation last times.
+
+1.0.1 (2018-06-02)
 ++++++++++++++++++
 
 **Bugfixes**
