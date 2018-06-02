@@ -4,6 +4,16 @@ Release History
 ---------------
 
 
+1.0.0 (2018-06-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed issue where the width and height of an image are swapped.
+  This is clear in image editors but was not obvious when viewed
+  in Chrome.
+
+
 1.0.0 (2018-05-23)
 ++++++++++++++++++
 
