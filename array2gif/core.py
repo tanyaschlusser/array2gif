@@ -121,8 +121,8 @@ def get_color_table_size(num_colors):
 
 
 def _get_logical_screen_descriptor(image, colors):
-    width = len(image)
-    height = len(image[0])
+    height = len(image)
+    width = len(image[0])
     global_color_table_flag = '1'
     # color resolution possibly doesn't do anything, because
     # the size of the colors in the global color table is always
