@@ -20,7 +20,7 @@ from collections import Counter
 import numpy
 
 __title__ = 'array2gif'
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 __author__ = 'Tanya Schlusser'
 __license__ = 'BSD'
 __copyright__ = 'Copyright 2016-2018 Tanya Schlusser'
