@@ -183,7 +183,8 @@ class Array2GIFTestCase(unittest.TestCase):
 
     def test_write_gif(self):
         core.write_gif(self.flickinger_dataset, self.filename)
-        gif = open(self.filename, 'rb').read()
+        with open(self.filename, 'rb') as infile:
+            gif = infile.read()
         self.assertEqual(
             gif,
             b'GIF89a'
@@ -199,7 +200,8 @@ class Array2GIFTestCase(unittest.TestCase):
         dataset = self.flickinger_dataset
         reversed_dataset = np.array([dataset[2], dataset[1], dataset[0]])
         core.write_gif([dataset, reversed_dataset], self.filename, fps=10)
-        gif = open(self.filename, 'rb').read()
+        with open(self.filename, 'rb') as infile:
+            gif = infile.read()
         self.assertEqual(
             gif,
             b'GIF89a'
