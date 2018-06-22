@@ -155,6 +155,36 @@ class Array2GIFTestCase(unittest.TestCase):
         binary_string_table_size = core.get_color_table_size(15)
         self.assertEqual(int(binary_string_table_size, base=2), 3)
 
+    def test_color_table_error_when_more_than_256_colors(self):
+        x = np.array(range(100))
+        z = np.zeros(len(x))
+        d = np.array([[x,z,z], [z,x,z], [z,z,x]])
+        image = core.get_image(d)
+        with self.assertRaises(RuntimeError):
+            core.get_colors(image)
+
+    def test_no_color_table_error_when_less_equal_256_colors(self):
+        x = np.array(range(85))
+        z = np.zeros(len(x))
+        d = np.array([[x,z,z], [z,x,z], [z,z,x]])
+        image = core.get_image(d)
+        try:
+            core.get_colors(image)
+        except RuntimeError as e:
+            msg = "`get_colors` RuntimeError on 255 distinct colors.\n{}"
+            self.fail(msg.format(e))
+
+    def test_color_table_error_when_animation_more_than_256_colors(self):
+        x = np.array(range(100))
+        z = np.zeros(len(x))
+        d = np.array([
+            [[x], [z], [z]],
+            [[z], [x], [z]],
+            [[z], [z], [x]]
+        ])
+        with self.assertRaises(RuntimeError):
+            [y for y in core._make_animated_gif(d)]  # drain the iterator
+
     def test_get_colors(self):
         colors = core.get_colors(self.flickinger_image)
         self.assertEqual(
