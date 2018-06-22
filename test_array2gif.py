@@ -4,6 +4,7 @@
 
 import os
 import unittest
+import warnings
 import numpy as np
 import array2gif.core as core
 from collections import Counter
@@ -122,6 +123,19 @@ class Array2GIFTestCase(unittest.TestCase):
             msg = "`check_dataset` ValueError on fixed 4D dataset.\n{}"
             self.fail(msg.format(e))
         self.assertEqual(True, (fixed_d == d).all())
+
+    def test_warning_on_non_uint8_dataset(self):
+        d = np.array([[[1]], [[2]], [[3.14]]])
+        with warnings.catch_warnings(record=True) as wlist:
+            core.get_image(d)
+            self.assertTrue(len(wlist) > 0)
+            self.assertTrue(any('array2gif' in w.filename for w in wlist))
+
+    def test_warning_on_non_uint8_dataset(self):
+        d = np.array([[[1]], [[2]], [[3]]])
+        with warnings.catch_warnings(record=True) as wlist:
+            core.get_image(d)
+            self.assertEqual(len(wlist), 0)
 
     def test_pixels_three_bytes(self):
         d = np.array([[[1]], [[2]], [[3]]])
