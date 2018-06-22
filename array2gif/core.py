@@ -73,6 +73,7 @@ def check_dataset(dataset):
                     .format(err, i)
                 )
 
+
 def try_fix_dataset(dataset):
     """Transpose the image data if it's in PIL format."""
     if isinstance(dataset, numpy.ndarray):
