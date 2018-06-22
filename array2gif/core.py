@@ -14,6 +14,7 @@ http://www.matthewflickinger.com/lab/whatsinagif/bits_and_bytes.asp
 from __future__ import division
 import math
 import struct
+import warnings
 from collections import Counter
 
 import numpy
@@ -25,6 +26,7 @@ __license__ = 'BSD'
 __copyright__ = 'Copyright 2016-2018 Tanya Schlusser'
 __docformat__ = 'restructuredtext'
 
+warnings.filterwarnings('default', module=__name__, message='.*')
 
 BLOCK_TERMINATOR = b'\x00'
 EXTENSION = b'\x21'
@@ -95,12 +97,20 @@ def try_fix_dataset(dataset):
 def get_image(dataset):
     """Convert the NumPy array to two nested lists with r,g,b tuples."""
     dim, nrow, ncol = dataset.shape
+    uint8_dataset = dataset.astype('uint8')
+    if not (uint8_dataset == dataset).all():
+        message = (
+            "\nYour image was cast to a `uint8` (`<img>.astype(uint8)`), "
+            "but some information was lost.\nPlease check your gif and "
+            "convert to uint8 beforehand if the gif looks wrong."
+        )
+        warnings.warn(message)
     image = [[
             struct.pack(
                 'BBB',
-                dataset[0, i, j],
-                dataset[1, i, j],
-                dataset[2, i, j]
+                uint8_dataset[0, i, j],
+                uint8_dataset[1, i, j],
+                uint8_dataset[2, i, j]
             )
             for j in range(ncol)]
         for i in range(nrow)]
