@@ -168,6 +168,12 @@ def get_colors(image):
     """Return a Counter containing each color and how often it appears.
     """
     colors = Counter(pixel for row in image for pixel in row)
+    if len(colors) > 256:
+        msg = (
+            "The maximum number of distinct colors in a GIF is 256 but "
+            "this image has {} colors and can't be encoded properly."
+        )
+        raise RuntimeError(msg.format(len(colors)))
     return colors
 
 
@@ -360,6 +366,16 @@ def _make_animated_gif(datasets, delay_time=10):
     colors = Counter()
     for color_set in color_sets:
         colors += color_set
+    if len(colors) > 256:
+        msg = (
+            "The maximum number of distinct colors in a GIF is 256.\n"
+            "Although each image has fewer than 256 colors, this library\n"
+            "has not yet implemented the Local Color Table option, meaning\n"
+            "the overall number of distinct colors in the animation has to\n"
+            "be below 256 for now.\n"
+            "This animation has {} distinct colors total...sorry."
+        )
+        raise RuntimeError(msg.format(len(colors)))
     yield _get_logical_screen_descriptor(images[0], colors)
     yield _get_global_color_table(colors)
     yield _get_application_extension()
