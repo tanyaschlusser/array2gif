@@ -110,10 +110,10 @@ class Array2GIFTestCase(unittest.TestCase):
         self.assertEqual(True, (d == one_green_pixel).all())
 
     def test_fix_shape_error_when_PIL_format_in_4d_numpy_array(self):
-        one_red_pixel = np.array([[[255]], [[0]], [[0]]])
-        one_green_pixel = np.array([[[0]], [[255]], [[0]]])
-        d = np.array([one_red_pixel, one_green_pixel])
-        pil_d = np.array([one_red_pixel.transpose(), one_green_pixel.transpose()])
+        red_pixel = np.array([[[255]], [[0]], [[0]]])
+        green_pixel = np.array([[[0]], [[255]], [[0]]])
+        d = np.array([red_pixel, green_pixel])
+        pil_d = np.array([red_pixel.transpose(), green_pixel.transpose()])
         with self.assertRaises(ValueError):
             core.check_dataset(pil_d)
         fixed_d = core.try_fix_dataset(pil_d)
@@ -131,7 +131,7 @@ class Array2GIFTestCase(unittest.TestCase):
             self.assertTrue(len(wlist) > 0)
             self.assertTrue(any('array2gif' in w.filename for w in wlist))
 
-    def test_warning_on_non_uint8_dataset(self):
+    def test_no_warning_on_uint8_dataset(self):
         d = np.array([[[1]], [[2]], [[3]]])
         with warnings.catch_warnings(record=True) as wlist:
             core.get_image(d)
@@ -158,7 +158,7 @@ class Array2GIFTestCase(unittest.TestCase):
     def test_color_table_error_when_more_than_256_colors(self):
         x = np.array(range(100))
         z = np.zeros(len(x))
-        d = np.array([[x,z,z], [z,x,z], [z,z,x]])
+        d = np.array([[x, z, z], [z, x, z], [z, z, x]])
         image = core.get_image(d)
         with self.assertRaises(RuntimeError):
             core.get_colors(image)
@@ -166,7 +166,7 @@ class Array2GIFTestCase(unittest.TestCase):
     def test_no_color_table_error_when_less_equal_256_colors(self):
         x = np.array(range(85))
         z = np.zeros(len(x))
-        d = np.array([[x,z,z], [z,x,z], [z,z,x]])
+        d = np.array([[x, z, z], [z, x, z], [z, z, x]])
         image = core.get_image(d)
         try:
             core.get_colors(image)
